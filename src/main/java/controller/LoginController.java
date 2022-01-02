@@ -31,7 +31,19 @@ public class LoginController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    String page = request.getParameter("page").toString();
 	    if (page.equals("login")) {
-		request.getRequestDispatcher("login.jsp").forward(request, response);   
+		HttpSession session = request.getSession(false);
+		if (session.getAttribute("email") != null && session.getAttribute("password") != null) {
+		    User user = new User();
+		    user.setEmail((String) session.getAttribute("email"));
+		    user.setPassword((String) session.getAttribute("password"));
+		    if (new UserController().login(user)) {
+			request.getRequestDispatcher("success.jsp").forward(request, response);
+		    } else {
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+		    }
+		} else {
+		    request.getRequestDispatcher("login.jsp").forward(request, response);   
+		}
 	    } else {
 		request.getRequestDispatcher("404.jsp").forward(request, response);
 	    }
@@ -49,7 +61,7 @@ public class LoginController extends HttpServlet {
 		user.setEmail(email);
 		user.setPassword(password);
 		if (new UserController().login(user)) {
-		    HttpSession session = request.getSession(false);
+		    HttpSession session = request.getSession();
 		    session.setAttribute("email", email);
 		    session.setAttribute("password", password);
 		    request.getRequestDispatcher("success.jsp").forward(request, response);
