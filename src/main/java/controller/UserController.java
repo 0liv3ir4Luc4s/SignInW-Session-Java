@@ -15,12 +15,10 @@ public class UserController {
 	    PreparedStatement ps = connection.getConnection().prepareStatement("SELECT * FROM user WHERE email=?;");
 	    ps.setString(1, email);
 	    ResultSet rs = ps.executeQuery();
-    	    if (rs != null) {
+    	    if (rs.next()) {
     		user = new User();
-		while (rs.next()) {
-		    user.setEmail(rs.getString("email"));
-		    user.setPassword(rs.getString("senha"));
-		}
+		user.setEmail(rs.getString("email"));
+		user.setPassword(rs.getString("senha"));
 	    }
 	} catch (SQLException SQLex) {
 	    System.out.println("Erro no banco de dados: "+SQLex.getMessage());
