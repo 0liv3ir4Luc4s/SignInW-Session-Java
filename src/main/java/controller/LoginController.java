@@ -6,8 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.mindrot.jbcrypt.BCrypt;
+import javax.servlet.http.HttpSession;
 
 import model.User;
 
@@ -32,7 +31,7 @@ public class LoginController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    String page = request.getParameter("page").toString();
 	    if (page.equals("login")) {
-		request.getRequestDispatcher("login.jsp").forward(request, response);
+		request.getRequestDispatcher("login.jsp").forward(request, response);   
 	    } else {
 		request.getRequestDispatcher("404.jsp").forward(request, response);
 	    }
@@ -50,6 +49,9 @@ public class LoginController extends HttpServlet {
 		user.setEmail(email);
 		user.setPassword(password);
 		if (new UserController().login(user)) {
+		    HttpSession session = request.getSession(false);
+		    session.setAttribute("email", email);
+		    session.setAttribute("password", password);
 		    request.getRequestDispatcher("success.jsp").forward(request, response);
 		} else {
 		    request.getRequestDispatcher("404.jsp").forward(request, response);
