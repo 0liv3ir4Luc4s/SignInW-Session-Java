@@ -12,11 +12,11 @@ public class UserController {
 	User user = null;
 	try {
 	    DBConnection connection = new DBConnection();
-	    PreparedStatement ps = connection.getConnection().prepareStatement("SELECT * from user WHERE email=?;");
+	    PreparedStatement ps = connection.getConnection().prepareStatement("SELECT * FROM user WHERE email=?;");
 	    ps.setString(1, email);
 	    ResultSet rs = ps.executeQuery();
-	    if (rs != null) {
-		user = new User();
+    	    if (rs != null) {
+    		user = new User();
 		while (rs.next()) {
 		    user.setEmail(rs.getString("email"));
 		    user.setPassword(rs.getString("senha"));
@@ -26,5 +26,14 @@ public class UserController {
 	    System.out.println("Erro no banco de dados: "+SQLex.getMessage());
 	}
 	return user;
+    }
+
+    public boolean login(User user) {
+	User registeredUser = this.findByEmail(user.getEmail());
+	if (registeredUser != null) {
+	    return registeredUser.auth(user.getEmail(), user.getPassword());
+	} else {
+	    return false;
+	}
     }
 }

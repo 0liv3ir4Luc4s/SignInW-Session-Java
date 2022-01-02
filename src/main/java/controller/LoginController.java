@@ -7,6 +7,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import model.User;
+
 /**
  * Servlet implementation class LoginController
  */
@@ -38,8 +42,21 @@ public class LoginController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+	    String action = request.getParameter("action");
+	    if (action.equals("login")) {
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		User user = new User();
+		user.setEmail(email);
+		user.setPassword(password);
+		if (new UserController().login(user)) {
+		    request.getRequestDispatcher("success.jsp").forward(request, response);
+		} else {
+		    request.getRequestDispatcher("404.jsp").forward(request, response);
+		}
+	    } else {
+		request.getRequestDispatcher("404.jsp").forward(request, response);
+	    }
 	}
 
 }
